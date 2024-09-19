@@ -42,11 +42,8 @@ static void match(TokenType expected)
 
 TreeNode * stmt_sequence(void)
 {
-  match(LCURLY);
   TreeNode * t = statement();
   TreeNode * p = t;
-  /*while ((token!=ENDFILE) && (token!=END) &&
-         (token!=ELSE) && (token!=UNTIL))*/
   while ((token!=ENDFILE) && (token!=RBRACE) &&
         token!=ELSE)
   { TreeNode * q;
@@ -60,7 +57,6 @@ TreeNode * stmt_sequence(void)
       }
     }
   }
-  match(RCURLY);
   return t;
 } 
 
@@ -68,10 +64,7 @@ TreeNode * statement(void)
 { TreeNode * t = NULL;
   switch (token) {
     case IF : t = if_stmt(); break;
-    /*case REPEAT : t = repeat_stmt(); break;*/
     case ID : t = assign_stmt(); break;
-    /*case READ : t = read_stmt(); break;*/
-    /*case WRITE : t = write_stmt(); break;*/
     default : syntaxError("unexpected token -> ");
               printToken(token,tokenString);
               token = getToken();
@@ -84,27 +77,18 @@ TreeNode * if_stmt(void)
 { TreeNode * t = newStmtNode(IfK);
   match(IF);
   if (t!=NULL) t->child[0] = exp();
-  /*match(THEN);*/
-  match(LCURLY);
   if (t!=NULL) t->child[1] = stmt_sequence();
-  match(RCURLY);
-
   if (token==ELSE) {
     match(ELSE);
 
-    match(LCURLY);
     if (t!=NULL) t->child[2] = stmt_sequence();
-    match(RCURLY);
   }
-  /*match(END);*/
   return t;
 }
 
 TreeNode * repeat_stmt(void)
 { TreeNode * t = newStmtNode(RepeatK);
- /*match(REPEAT);*/
   if (t!=NULL) t->child[0] = stmt_sequence();
- /*match(UNTIL);*/
   if (t!=NULL) t->child[1] = exp();
   return t;
 }
@@ -121,7 +105,6 @@ TreeNode * assign_stmt(void)
 
 TreeNode * read_stmt(void)
 { TreeNode * t = newStmtNode(ReadK);
-  /*match(READ);*/
   if ((t!=NULL) && (token==ID))
     t->attr.name = copyString(tokenString);
   match(ID);
@@ -130,7 +113,6 @@ TreeNode * read_stmt(void)
 
 TreeNode * write_stmt(void)
 { TreeNode * t = newStmtNode(WriteK);
-  /*match(WRITE);*/
   if (t!=NULL) t->child[0] = exp();
   return t;
 }
