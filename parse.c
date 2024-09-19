@@ -44,8 +44,7 @@ TreeNode * stmt_sequence(void)
 {
   TreeNode * t = statement();
   TreeNode * p = t;
-  while ((token!=ENDFILE) && (token!=RBRACE) &&
-        token!=ELSE)
+  while ((token!=ENDFILE) && (token!=ELSE))
   { TreeNode * q;
     match(SEMI);
     q = statement();
